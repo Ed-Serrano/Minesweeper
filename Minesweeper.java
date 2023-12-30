@@ -9,19 +9,14 @@ public class Minesweeper {
         // initialize grid: place bombs in random location
         initMinefield(numMines, grid);
 
-        // 1. draw the grid (take into account revealed)
-        StdDraw.setScale(-0.5, size - 0.5); // change the coordinate system to be to use array indices as coordinates
+        StdDraw.setScale(-0.5, size - 0.5);
         drawMinefield(grid, revealed);
 
-        // keep doing these steps until otherwise told
         while (true) {
-            // 2. wait until the user clicks (gives coordinates)
-            // 3. update "revealed" (based on these coordinates)
             handleMouseClick(grid, revealed);
 
             drawMinefield(grid, revealed);
 
-            // 4. check for losing/winning condition
             if (hasWon(grid, revealed)) {
                 StdOut.println("You won!");
                 break;
@@ -41,7 +36,7 @@ public class Minesweeper {
     public static void handleMouseClick(boolean[][] grid, boolean[][] revealed) {
         // Wait for the user to press on the mouse button
         while (!StdDraw.isMousePressed()) {
-            // do nothing!  on purpose!
+            // do nothing! 
         }
 
         int x = (int)Math.round(StdDraw.mouseX());
@@ -49,7 +44,7 @@ public class Minesweeper {
 
         // Wait for the user to release the mouse button
         while (StdDraw.isMousePressed()) {
-            // do nothing!  on purpose!
+            // do nothing!  
         }
 
         uncover(grid, revealed, x, y);
@@ -111,6 +106,17 @@ public class Minesweeper {
     }
 
     public static void uncover(boolean[][] grid, boolean[][] revealed, int x, int y) {
-        revealed[x][y] = true;
+        if (!revealed[x][y]) {
+            revealed[x][y] = true;
+            if (countNeighboringMines(grid, x, y) == 0) {
+                for (int x1 = x - 1; x1 <= x + 1; ++x1) {
+                    for (int y1 = y - 1; y1 <= y + 1; ++y1) {
+                        if (x1 >= 0 && x1 < grid.length && y1 >= 0 && y1 < grid.length) {
+                            uncover(grid, revealed, x1, y1);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
